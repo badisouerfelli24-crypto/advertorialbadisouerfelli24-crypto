@@ -1,0 +1,2577 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advertorial Editor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700;900&family=Cairo:wght@400;500;600;700;900&family=Tajawal:wght@400;500;700;900&family=Almarai:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;500;700;900&family=Noto+Naskh+Arabic:wght@400;500;700&family=Amiri:wght@400;700&display=swap">
+
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-elevated: #f8f9fa;
+  --fg: #1a1a2e;
+  --fg-muted: #6b7280;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --border: #e5e7eb;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a;
+    --bg-elevated: #1e293b;
+    --fg: #f1f5f9;
+    --fg-muted: #94a3b8;
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+    --border: #334155;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --card-bg: #1e293b;
+    --input-bg: #1e293b;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-elevated: #1e293b;
+  --fg: #f1f5f9;
+  --fg-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --border: #334155;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --card-bg: #1e293b;
+  --input-bg: #1e293b;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  padding: 0 16px;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Login Screen */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+}
+
+.login-box {
+  background: var(--card-bg);
+  padding: 48px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px var(--shadow);
+  width: 100%;
+  max-width: 400px;
+  margin: 16px;
+}
+
+.login-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.login-subtitle {
+  color: var(--fg-muted);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--fg);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  background: var(--input-bg);
+  color: var(--fg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--fg);
+  border: 2px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+}
+
+.error-message {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .error-message {
+    background: #7f1d1d;
+    color: #fecaca;
+  }
+}
+
+:root[data-theme="dark"] .error-message {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* Admin Panel */
+.admin-container {
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.admin-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+/* Dashboard */
+.new-adv-row {
+  margin-bottom: 20px;
+}
+
+.new-adv-form {
+  display: flex;
+  gap: 12px;
+}
+
+.new-adv-form .editor-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.new-adv-btn {
+  width: auto;
+  flex-shrink: 0;
+}
+
+.storage-meter {
+  margin-bottom: 24px;
+}
+
+.storage-bar {
+  height: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.storage-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.storage-fill.storage-high {
+  background: #dc2626;
+}
+
+.adv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.adv-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.adv-thumb {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 16px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1e1b4b);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  text-align: start;
+}
+
+.adv-thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.65));
+}
+
+.adv-thumb-headline {
+  position: relative;
+  width: 100%;
+  color: white;
+  font-family: 'Playfair Display', 'Cairo', serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adv-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.adv-name-input {
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+.adv-meta {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.adv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.btn-small {
+  width: auto;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.btn-danger {
+  background: transparent;
+  color: #dc2626;
+  border: 2px solid transparent;
+}
+
+.btn-danger:hover {
+  border-color: #dc2626;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--fg-muted);
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+}
+
+.editor-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg);
+  font-family: 'Playfair Display', 'Cairo', serif;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.name-input:hover {
+  border-color: var(--border);
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--input-bg);
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--fg);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.tab-btn:hover:not(.active) {
+  border-color: var(--accent);
+}
+
+.editor-section {
+  display: none;
+  background: var(--card-bg);
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+
+.editor-section.active {
+  display: block;
+}
+
+.editor-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.editor-field {
+  margin-bottom: 24px;
+}
+
+.editor-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--fg);
+}
+
+.editor-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  background: var(--input-bg);
+  color: var(--fg);
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.editor-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.editor-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.editor-hint {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin-top: 8px;
+}
+
+/* Formatting toolbar (Article Body) */
+.format-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.format-btn {
+  min-width: 40px;
+  padding: 6px 12px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.format-btn:hover {
+  border-color: var(--accent);
+}
+
+.format-btn mark {
+  background: #fef08a;
+  color: #1a1a2e;
+  padding: 0 3px;
+}
+
+/* Text Style editor */
+.style-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+
+@media (min-width: 1000px) {
+  .style-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.style-group {
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.style-group-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.style-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.style-row:last-child {
+  margin-bottom: 0;
+}
+
+.style-row-label {
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+
+.size-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.size-control input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.size-value {
+  min-width: 48px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.segmented {
+  display: flex;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.segmented button {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  border-left: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.segmented button:first-child {
+  border-left: none;
+}
+
+.segmented button.active {
+  background: var(--accent);
+  color: white;
+}
+
+.style-select {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.live-preview {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+}
+
+.live-preview-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.live-preview-scroll {
+  max-height: calc(100vh - 80px);
+  overflow: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.image-upload-area {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+
+.image-upload-area:hover {
+  border-color: var(--accent);
+  background: var(--bg-elevated);
+}
+
+.upload-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.upload-text {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.upload-hint {
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+
+.image-preview {
+  margin-top: 24px;
+  position: relative;
+}
+
+.preview-image {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+
+/* Preview Panel */
+.preview-container {
+  display: none;
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.btn-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.layout-notice {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.preview-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.preview-frame {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Advertorial Content */
+.advertorial {
+  padding: 0;
+  container-type: inline-size;
+}
+
+.advertorial-hero {
+  position: relative;
+  min-height: 400px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.advertorial-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+}
+
+.advertorial-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 48px 24px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.advertorial-headline {
+  font-family: var(--headline-font, 'Playfair Display', serif);
+  font-size: var(--headline-size, 42px);
+  font-weight: var(--headline-weight, 900);
+  text-align: var(--headline-align, center);
+  line-height: 1.3;
+  margin-bottom: 16px;
+  text-wrap: balance;
+}
+
+.advertorial-subheadline {
+  font-family: var(--subheadline-font, inherit);
+  font-size: var(--subheadline-size, 20px);
+  font-weight: var(--subheadline-weight, 400);
+  text-align: var(--subheadline-align, center);
+  opacity: 0.95;
+  margin-bottom: 32px;
+}
+
+.advertorial-content {
+  position: relative;
+  padding: 48px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  color: #1a1a2e;
+}
+
+.advertorial-body {
+  font-family: var(--body-font, inherit);
+  font-size: var(--body-size, 18px);
+  font-weight: var(--body-weight, 400);
+  text-align: var(--body-align, left);
+  line-height: var(--body-lh, 1.8);
+  color: #374151;
+}
+
+.advertorial-body p {
+  margin-bottom: 24px;
+}
+
+.advertorial-body mark {
+  background: #fef08a;
+  color: inherit;
+  padding: 0 2px;
+}
+
+/* Editor fields mirror the Text Style settings */
+.rich-editor {
+  min-height: 300px;
+  padding: 24px;
+  background: #ffffff;
+  overflow-wrap: anywhere;
+  cursor: text;
+}
+
+.rich-editor:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+}
+
+.rich-editor > :first-child {
+  margin-top: 0;
+}
+
+.rich-editor > :last-child {
+  margin-bottom: 0;
+}
+
+#headlineInput {
+  font-family: var(--headline-font, inherit);
+  font-size: var(--headline-size, 16px);
+  font-weight: var(--headline-weight, 400);
+  text-align: var(--headline-align, start);
+  line-height: 1.3;
+}
+
+#subheadlineInput {
+  font-family: var(--subheadline-font, inherit);
+  font-size: var(--subheadline-size, 16px);
+  font-weight: var(--subheadline-weight, 400);
+  text-align: var(--subheadline-align, start);
+}
+
+#ctaHeadlineInput {
+  font-family: var(--ctaHeadline-font, inherit);
+  font-size: var(--ctaHeadline-size, 16px);
+  font-weight: var(--ctaHeadline-weight, 400);
+  text-align: var(--ctaHeadline-align, start);
+  line-height: 1.3;
+}
+
+#ctaTextInput {
+  font-family: var(--ctaText-font, inherit);
+  font-size: var(--ctaText-size, 16px);
+  font-weight: var(--ctaText-weight, 400);
+  text-align: var(--ctaText-align, start);
+}
+
+#ctaButtonTextInput {
+  font-family: var(--ctaButton-font, inherit);
+  font-size: var(--ctaButton-size, 16px);
+  font-weight: var(--ctaButton-weight, 400);
+  text-align: var(--ctaButton-align, start);
+}
+
+.advertorial-body h2 {
+  font-family: var(--h2-font, 'Playfair Display', serif);
+  font-size: var(--h2-size, 32px);
+  font-weight: var(--h2-weight, 700);
+  text-align: var(--h2-align, left);
+  line-height: 1.3;
+  margin: 48px 0 24px;
+  color: #1a1a2e;
+}
+
+/* Free-placed images beside the article */
+.float-img {
+  margin: 24px 0 0;
+}
+
+.float-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  user-select: none;
+}
+
+.float-handle {
+  display: none;
+}
+
+/* Wide page: images sit where they were placed (beside or over the article) */
+@container (min-width: 1100px) {
+  .advertorial-content {
+    min-height: var(--float-min-h, 0px);
+  }
+
+  .float-img {
+    position: absolute;
+    z-index: 2;
+    margin: 0;
+  }
+}
+
+/* Narrow page / phones: images stack below the article text */
+@container (max-width: 1099.98px) {
+  .float-img {
+    width: 100% !important;
+  }
+}
+
+.layout-editing .float-img {
+  cursor: move;
+  touch-action: none;
+  outline: 2px dashed rgba(37, 99, 235, 0.6);
+  outline-offset: 2px;
+}
+
+.layout-editing .float-img:hover,
+.layout-editing .float-img.selected {
+  outline: 2px solid #2563eb;
+}
+
+.layout-editing .float-img.selected {
+  z-index: 3;
+}
+
+.layout-editing .float-handle {
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 2px solid #2563eb;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.float-handle.nw { top: -9px; left: -9px; cursor: nwse-resize; }
+.float-handle.ne { top: -9px; right: -9px; cursor: nesw-resize; }
+.float-handle.sw { bottom: -9px; left: -9px; cursor: nesw-resize; }
+.float-handle.se { bottom: -9px; right: -9px; cursor: nwse-resize; }
+
+.content-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.content-image-item {
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.content-image-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.content-image-actions {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+}
+
+.content-image-actions button {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.content-image-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.advertorial-cta {
+  margin-top: 48px;
+  padding: 32px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+}
+
+.cta-headline {
+  font-family: var(--ctaHeadline-font, 'Playfair Display', serif);
+  font-size: var(--ctaHeadline-size, 28px);
+  font-weight: var(--ctaHeadline-weight, 700);
+  text-align: var(--ctaHeadline-align, center);
+  margin-bottom: 16px;
+}
+
+.cta-text {
+  font-family: var(--ctaText-font, inherit);
+  font-size: var(--ctaText-size, 16px);
+  font-weight: var(--ctaText-weight, 400);
+  text-align: var(--ctaText-align, center);
+  opacity: 0.95;
+  margin-bottom: 24px;
+}
+
+.cta-button-wrap {
+  text-align: var(--ctaButton-align, center);
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 16px 40px;
+  background: white;
+  color: #2563eb;
+  text-decoration: none;
+  font-family: var(--ctaButton-font, inherit);
+  font-weight: var(--ctaButton-weight, 700);
+  font-size: var(--ctaButton-size, 18px);
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .login-box {
+    padding: 32px 24px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .admin-title {
+    font-size: 24px;
+  }
+
+  .editor-section {
+    padding: 20px;
+  }
+
+  .editor-title-row {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .name-input {
+    font-size: 22px;
+  }
+
+  .style-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .advertorial-headline {
+    font-size: calc(var(--headline-size, 42px) * 0.78);
+  }
+
+  .advertorial-subheadline {
+    font-size: calc(var(--subheadline-size, 20px) * 0.9);
+  }
+
+  .advertorial-content {
+    padding: 32px 16px;
+  }
+
+  .advertorial-body {
+    font-size: calc(var(--body-size, 18px) * 0.9);
+  }
+
+  .advertorial-body h2 {
+    font-size: calc(var(--h2-size, 32px) * 0.8);
+  }
+
+  .cta-headline {
+    font-size: calc(var(--ctaHeadline-size, 28px) * 0.85);
+  }
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Saved Indicator */
+.saved-indicator {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #059669;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.saved-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+
+<div id="loginScreen" class="login-container">
+  <div class="login-box">
+    <h1 class="login-title">Admin Access</h1>
+    <p class="login-subtitle">Enter your password to edit the advertorial</p>
+
+    <div id="loginError" class="error-message" style="display: none;">
+      Incorrect password. Please try again.
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="passwordInput">Password</label>
+      <input type="password" id="passwordInput" class="form-input" placeholder="Enter admin password">
+    </div>
+
+    <button class="btn btn-primary" onclick="handleLogin()">
+      Access Editor
+    </button>
+  </div>
+</div>
+
+<div id="dashboard" class="admin-container">
+  <div class="admin-header">
+    <h1 class="admin-title">Your Advertorials</h1>
+    <button class="btn btn-secondary" onclick="handleLogout()">
+      Logout
+    </button>
+  </div>
+
+  <div class="new-adv-row">
+    <label class="editor-label" for="newAdvertorialName">New advertorial</label>
+    <div class="new-adv-form">
+      <input type="text" id="newAdvertorialName" class="editor-input" dir="auto" placeholder="Name it, e.g. Summer skincare offer">
+      <button class="btn btn-primary new-adv-btn" onclick="createAdvertorial()">Create</button>
+    </div>
+  </div>
+
+  <div class="storage-meter">
+    <div class="storage-bar"><div id="storageFill" class="storage-fill"></div></div>
+    <div id="storageText" class="editor-hint"></div>
+  </div>
+
+  <div id="advertorialList" class="adv-grid"></div>
+</div>
+
+<div id="adminPanel" class="admin-container">
+  <div class="admin-header">
+    <div class="editor-title-row">
+      <button class="btn btn-secondary" onclick="backToDashboard()">← All Advertorials</button>
+      <input type="text" id="advertorialNameInput" class="name-input" dir="auto" aria-label="Advertorial name" title="Click to rename">
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn btn-secondary" onclick="showPreview()">
+        Preview Page
+      </button>
+      <button class="btn btn-secondary" onclick="handleLogout()">
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="tab-btn active" onclick="switchTab('hero')">Hero Section</button>
+    <button class="tab-btn" onclick="switchTab('content')">Content</button>
+    <button class="tab-btn" onclick="switchTab('cta')">Call to Action</button>
+    <button class="tab-btn" onclick="switchTab('textStyle')">Text Style</button>
+    <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+  </div>
+
+  <!-- Hero Section Editor -->
+  <div id="heroEditor" class="editor-section active">
+    <h2 class="editor-section-title">Hero Section</h2>
+
+    <div class="editor-field">
+      <label class="editor-label">Hero Image</label>
+      <div class="image-upload-area" onclick="document.getElementById('heroImageInput').click()">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Click to upload hero image</div>
+        <div class="upload-hint">Recommended: 1920x1080px, JPG or PNG</div>
+      </div>
+      <input type="file" id="heroImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('heroImage', this)">
+      <div id="heroImagePreview" class="image-preview" style="display: none;">
+        <img id="heroImagePreviewImg" class="preview-image" src="" alt="Hero preview">
+        <button class="remove-image-btn" onclick="removeImage('heroImage')">Remove</button>
+      </div>
+    </div>
+
+    <div class="editor-field">
+      <label class="editor-label" for="headlineInput">Headline</label>
+      <input type="text" id="headlineInput" class="editor-input" placeholder="Your attention-grabbing headline">
+      <p class="editor-hint">Keep it under 60 characters for best impact</p>
+    </div>
+
+    <div class="editor-field">
+      <label class="editor-label" for="subheadlineInput">Subheadline</label>
+      <textarea id="subheadlineInput" class="editor-input editor-textarea" placeholder="Supporting text that elaborates on your headline"></textarea>
+    </div>
+  </div>
+
+  <!-- Content Editor -->
+  <div id="contentEditor" class="editor-section">
+    <h2 class="editor-section-title">Body Content</h2>
+
+    <div class="editor-field">
+      <label class="editor-label" id="bodyContentLabel">Article Body</label>
+      <div class="format-toolbar" role="toolbar" aria-label="Text formatting">
+        <button type="button" class="format-btn" onmousedown="event.preventDefault()" onclick="formatBody('bold')" title="Bold"><b>B</b></button>
+        <button type="button" class="format-btn" onmousedown="event.preventDefault()" onclick="formatBody('italic')" title="Italic"><i>I</i></button>
+        <button type="button" class="format-btn" onmousedown="event.preventDefault()" onclick="formatBody('underline')" title="Underline"><u>U</u></button>
+        <button type="button" class="format-btn" onmousedown="event.preventDefault()" onclick="formatBody('highlight')" title="Highlight"><mark>H</mark></button>
+        <button type="button" class="format-btn" onmousedown="event.preventDefault()" onclick="formatBody('h2')" title="Section header">H2</button>
+      </div>
+      <div id="bodyContentInput" class="editor-input rich-editor advertorial-body" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="bodyContentLabel" data-placeholder="Write your advertorial content here…"></div>
+      <p class="editor-hint">What you see here is how the article will look. Press Enter for a new paragraph. Select text and use the buttons above for bold, italic, underline, highlight or a section header.</p>
+    </div>
+
+    <div class="editor-field">
+      <label class="editor-label">Additional Images</label>
+      <div class="image-upload-area" onclick="document.getElementById('contentImageInput').click()">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Click to upload content images</div>
+        <div class="upload-hint">You can add multiple images</div>
+      </div>
+      <p class="editor-hint">Images are placed in the empty spaces beside the article. To move or resize them, open <strong>Preview Page → Arrange Images</strong>.</p>
+      <input type="file" id="contentImageInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload('contentImages', this)">
+      <div id="contentImagesPreview"></div>
+    </div>
+  </div>
+
+  <!-- CTA Editor -->
+  <div id="ctaEditor" class="editor-section">
+    <h2 class="editor-section-title">Call to Action</h2>
+
+    <div class="editor-field">
+      <label class="editor-label" for="ctaHeadlineInput">CTA Headline</label>
+      <input type="text" id="ctaHeadlineInput" class="editor-input" placeholder="Ready to get started?">
+    </div>
+
+    <div class="editor-field">
+      <label class="editor-label" for="ctaTextInput">CTA Text</label>
+      <textarea id="ctaTextInput" class="editor-input editor-textarea" placeholder="Explain what happens when they click"></textarea>
+    </div>
+
+    <div class="editor-field">
+      <label class="editor-label" for="ctaButtonTextInput">Button Text</label>
+      <input type="text" id="ctaButtonTextInput" class="editor-input" placeholder="Learn More">
+    </div>
+
+    <div class="editor-field">
+      <label class="editor-label" for="ctaLinkInput">Button Link URL</label>
+      <input type="url" id="ctaLinkInput" class="editor-input" placeholder="https://your-landing-page.com">
+      <p class="editor-hint">Where should the button take visitors?</p>
+    </div>
+  </div>
+
+  <!-- Text Style Editor -->
+  <div id="textStyleEditor" class="editor-section">
+    <h2 class="editor-section-title">Text Style</h2>
+
+    <div class="style-layout">
+      <div id="textStyleControls"></div>
+
+      <div class="live-preview">
+        <div class="live-preview-label">Live preview</div>
+        <div id="livePreview" class="live-preview-scroll"></div>
+      </div>
+    </div>
+
+    <div class="save-actions">
+      <button class="btn btn-secondary" onclick="resetTextStyles()">
+        Reset Text Styles
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div id="settingsEditor" class="editor-section">
+    <h2 class="editor-section-title">Settings</h2>
+
+    <div class="editor-field">
+      <label class="editor-label" for="passwordChangeInput">Change Admin Password</label>
+      <input type="password" id="passwordChangeInput" class="editor-input" placeholder="Enter new password">
+      <p class="editor-hint">Leave blank to keep current password</p>
+    </div>
+
+    <div class="save-actions">
+      <button class="btn btn-primary" onclick="saveAllContent()">
+        Save All Changes
+      </button>
+    </div>
+  </div>
+
+  <div class="save-actions">
+    <button class="btn btn-primary" onclick="saveAllContent()">
+      Save All Changes
+    </button>
+    <button class="btn btn-secondary" onclick="showPreview()">
+      Preview Page
+    </button>
+  </div>
+</div>
+
+<!-- Preview Panel -->
+<div id="previewPanel" class="preview-container">
+  <div class="preview-header">
+    <h1 class="preview-title" id="previewTitle">Preview</h1>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <button id="layoutToggleBtn" class="btn btn-secondary" onclick="toggleLayoutEditing()">
+        Arrange Images
+      </button>
+      <button id="previewBackBtn" class="btn btn-secondary" onclick="hidePreview()">
+        Back to Editor
+      </button>
+    </div>
+  </div>
+
+  <div id="layoutNotice" class="layout-notice" style="display: none;"></div>
+
+  <div id="previewFrame" class="preview-frame">
+    <!-- Preview content renders here -->
+  </div>
+</div>
+
+<div id="savedIndicator" class="saved-indicator">
+  ✓ Changes saved
+</div>
+
+<script>
+// Initialize storage keys
+const STORAGE_KEY = 'advertorial_content';
+const AUTH_KEY = 'advertorial_auth';
+const PASSWORD_KEY = 'advertorial_password';
+
+// Default password (change this in settings)
+const DEFAULT_PASSWORD = 'admin123';
+
+// Default content
+const defaultContent = {
+  heroImage: '',
+  headline: 'Transform Your Business Today',
+  subheadline: 'Discover the proven system that has helped thousands achieve remarkable results',
+  bodyContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n## Why This Works\n\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\n## Get Started Now\n\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  contentImages: [],
+  ctaHeadline: 'Ready to Take Action?',
+  ctaText: 'Join thousands who have already transformed their results. Click below to get started.',
+  ctaButtonText: 'Get Started Now',
+  ctaLink: 'https://example.com'
+};
+
+// ---- Text styles ----
+const FONTS = {
+  'Inter': "'Inter', sans-serif",
+  'Playfair Display': "'Playfair Display', serif",
+  'Cairo': "'Cairo', sans-serif",
+  'Tajawal': "'Tajawal', sans-serif",
+  'Almarai': "'Almarai', sans-serif",
+  'Noto Kufi Arabic': "'Noto Kufi Arabic', sans-serif",
+  'Noto Naskh Arabic': "'Noto Naskh Arabic', serif",
+  'Amiri': "'Amiri', serif"
+};
+const LATIN_FONTS = ['Inter', 'Playfair Display'];
+const ARABIC_FONTS = ['Cairo', 'Tajawal', 'Almarai', 'Noto Kufi Arabic', 'Noto Naskh Arabic', 'Amiri'];
+
+const TEXT_ELEMENTS = [
+  { key: 'headline', label: 'Headline', min: 20, max: 80 },
+  { key: 'subheadline', label: 'Subheadline', min: 12, max: 40 },
+  { key: 'body', label: 'Article body', min: 12, max: 32, lineHeight: true },
+  { key: 'h2', label: 'Section headers (##)', min: 16, max: 60 },
+  { key: 'ctaHeadline', label: 'CTA headline', min: 16, max: 60 },
+  { key: 'ctaText', label: 'CTA text', min: 12, max: 32 },
+  { key: 'ctaButton', label: 'CTA button', min: 12, max: 32, noJustify: true }
+];
+
+const defaultTextStyles = {
+  direction: 'ltr',
+  bodyFont: 'Inter',
+  headingFont: 'Playfair Display',
+  elements: {
+    headline: { size: 42, align: 'center', font: 'heading', weight: 900 },
+    subheadline: { size: 20, align: 'center', font: 'body', weight: 400 },
+    body: { size: 18, align: 'left', font: 'body', weight: 400, lineHeight: 1.8 },
+    h2: { size: 32, align: 'left', font: 'heading', weight: 700 },
+    ctaHeadline: { size: 28, align: 'center', font: 'heading', weight: 700 },
+    ctaText: { size: 16, align: 'center', font: 'body', weight: 400 },
+    ctaButton: { size: 18, align: 'center', font: 'body', weight: 700 }
+  }
+};
+
+// Working copy of the styles being edited
+let currentStyles = null;
+
+function getTextStyles(content) {
+  const styles = JSON.parse(JSON.stringify(defaultTextStyles));
+  const saved = content && content.textStyles;
+  if (!saved) return styles;
+
+  ['direction', 'bodyFont', 'headingFont'].forEach(k => {
+    if (saved[k]) styles[k] = saved[k];
+  });
+  TEXT_ELEMENTS.forEach(({ key }) => {
+    Object.assign(styles.elements[key], saved.elements && saved.elements[key]);
+  });
+  return styles;
+}
+
+function resolveFont(styles, font) {
+  if (font === 'heading') return FONTS[styles.headingFont] || FONTS['Inter'];
+  if (font === 'body') return FONTS[styles.bodyFont] || FONTS['Inter'];
+  return FONTS[font] || FONTS['Inter'];
+}
+
+// CSS custom properties consumed by the .advertorial styles
+function styleVars(styles) {
+  const vars = [];
+  TEXT_ELEMENTS.forEach(({ key }) => {
+    const el = styles.elements[key];
+    vars.push(
+      `--${key}-size:${el.size}px`,
+      `--${key}-align:${el.align}`,
+      `--${key}-weight:${el.weight}`,
+      `--${key}-font:${resolveFont(styles, el.font)}`
+    );
+  });
+  vars.push(`--body-lh:${styles.elements.body.lineHeight}`);
+  return vars.join(';');
+}
+
+function fontOptions(selected, extra) {
+  const opt = (value, label) =>
+    `<option value="${value}"${value === selected ? ' selected' : ''}>${label}</option>`;
+  return (extra || []).map(([v, l]) => opt(v, l)).join('') +
+    `<optgroup label="Latin">${LATIN_FONTS.map(f => opt(f, f)).join('')}</optgroup>` +
+    `<optgroup label="Arabic">${ARABIC_FONTS.map(f => opt(f, f)).join('')}</optgroup>`;
+}
+
+function segmented(attrs, options) {
+  return `<div class="segmented" ${attrs}>` +
+    options.map(([value, label]) => `<button type="button" data-value="${value}">${label}</button>`).join('') +
+    `</div>`;
+}
+
+// Build the Text Style controls (once)
+function buildTextStyleControls() {
+  const container = document.getElementById('textStyleControls');
+
+  let html = `
+    <div class="style-group">
+      <div class="style-group-title">Page text direction</div>
+      ${segmented('data-global="direction"', [['ltr', 'Left → Right (English)'], ['rtl', 'Right → Left (Arabic)']])}
+      <p class="editor-hint">Right → Left starts every line on the right side, which is what Arabic needs. Switching also mirrors left/right alignments and picks an Arabic font.</p>
+      <div class="style-row" style="margin-top: 16px;">
+        <label class="style-row-label" for="bodyFontSelect">Body font</label>
+        <select id="bodyFontSelect" class="editor-input style-select" data-global="bodyFont"></select>
+      </div>
+      <div class="style-row">
+        <label class="style-row-label" for="headingFontSelect">Heading font</label>
+        <select id="headingFontSelect" class="editor-input style-select" data-global="headingFont"></select>
+      </div>
+    </div>`;
+
+  TEXT_ELEMENTS.forEach(({ key, label, min, max, lineHeight, noJustify }) => {
+    const aligns = [['left', 'Left'], ['center', 'Center'], ['right', 'Right']];
+    if (!noJustify) aligns.push(['justify', 'Justify']);
+
+    html += `
+      <div class="style-group">
+        <div class="style-group-title">${label}</div>
+        <div class="style-row">
+          <span class="style-row-label">Size</span>
+          <div class="size-control">
+            <input type="range" min="${min}" max="${max}" step="1" data-el="${key}" data-prop="size" aria-label="${label} size">
+            <span class="size-value" data-value-for="${key}-size"></span>
+          </div>
+        </div>
+        <div class="style-row">
+          <span class="style-row-label">Placement</span>
+          ${segmented(`data-el="${key}" data-prop="align" aria-label="${label} alignment"`, aligns)}
+        </div>
+        <div class="style-row">
+          <span class="style-row-label">Font</span>
+          <select class="editor-input style-select" data-el="${key}" data-prop="font" aria-label="${label} font"></select>
+        </div>
+        <div class="style-row">
+          <span class="style-row-label">Weight</span>
+          <select class="editor-input style-select" data-el="${key}" data-prop="weight" aria-label="${label} weight">
+            <option value="400">Regular</option>
+            <option value="500">Medium</option>
+            <option value="700">Bold</option>
+            <option value="900">Black</option>
+          </select>
+        </div>
+        ${lineHeight ? `
+        <div class="style-row">
+          <span class="style-row-label">Line spacing</span>
+          <div class="size-control">
+            <input type="range" min="1.2" max="2.8" step="0.1" data-el="${key}" data-prop="lineHeight" aria-label="${label} line spacing">
+            <span class="size-value" data-value-for="${key}-lineHeight"></span>
+          </div>
+        </div>` : ''}
+      </div>`;
+  });
+
+  container.innerHTML = html;
+
+  container.addEventListener('click', e => {
+    const btn = e.target.closest('.segmented button');
+    if (!btn) return;
+    const group = btn.parentElement;
+    if (group.dataset.global === 'direction') {
+      setTextDirection(btn.dataset.value);
+    } else {
+      currentStyles.elements[group.dataset.el][group.dataset.prop] = btn.dataset.value;
+    }
+    syncTextStyleControls();
+  });
+
+  const onChange = e => {
+    const t = e.target;
+    if (t.dataset.global) {
+      currentStyles[t.dataset.global] = t.value;
+    } else if (t.dataset.el) {
+      const numeric = ['size', 'weight', 'lineHeight'].includes(t.dataset.prop);
+      currentStyles.elements[t.dataset.el][t.dataset.prop] = numeric ? Number(t.value) : t.value;
+    } else {
+      return;
+    }
+    syncTextStyleControls();
+  };
+  container.addEventListener('input', onChange);
+  container.addEventListener('change', onChange);
+}
+
+function setTextDirection(dir) {
+  if (dir === currentStyles.direction) return;
+  currentStyles.direction = dir;
+
+  // Mirror left/right placements so text keeps starting at the line start
+  Object.values(currentStyles.elements).forEach(el => {
+    if (el.align === 'left') el.align = 'right';
+    else if (el.align === 'right') el.align = 'left';
+  });
+
+  // Latin fonts have no Arabic glyphs: switch to an Arabic font
+  if (dir === 'rtl') {
+    if (!ARABIC_FONTS.includes(currentStyles.bodyFont)) currentStyles.bodyFont = 'Cairo';
+    if (!ARABIC_FONTS.includes(currentStyles.headingFont)) currentStyles.headingFont = 'Cairo';
+    Object.values(currentStyles.elements).forEach(el => {
+      if (LATIN_FONTS.includes(el.font)) el.font = 'body';
+    });
+  }
+}
+
+// Reflect currentStyles in the controls, editor fields and live preview
+function syncTextStyleControls() {
+  const container = document.getElementById('textStyleControls');
+
+  container.querySelectorAll('.segmented').forEach(group => {
+    const value = group.dataset.global
+      ? currentStyles[group.dataset.global]
+      : currentStyles.elements[group.dataset.el][group.dataset.prop];
+    group.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.value === value));
+  });
+
+  document.getElementById('bodyFontSelect').innerHTML = fontOptions(currentStyles.bodyFont);
+  document.getElementById('headingFontSelect').innerHTML = fontOptions(currentStyles.headingFont);
+
+  container.querySelectorAll('[data-el]').forEach(input => {
+    if (input.classList.contains('segmented')) return;
+    const value = currentStyles.elements[input.dataset.el][input.dataset.prop];
+    if (input.dataset.prop === 'font') {
+      input.innerHTML = fontOptions(value, [['heading', `Heading font (${currentStyles.headingFont})`], ['body', `Body font (${currentStyles.bodyFont})`]]);
+    } else {
+      input.value = value;
+    }
+    const label = container.querySelector(`[data-value-for="${input.dataset.el}-${input.dataset.prop}"]`);
+    if (label) label.textContent = input.dataset.prop === 'size' ? `${value}px` : Number(value).toFixed(1);
+  });
+
+  applyEditorDirection();
+  renderLivePreview();
+}
+
+// Make the editor fields look like the page: direction + text style vars
+function applyEditorDirection() {
+  document.querySelectorAll('#adminPanel input.editor-input[type="text"], #adminPanel textarea.editor-input, #bodyContentInput')
+    .forEach(el => { el.dir = currentStyles.direction; });
+
+  const panel = document.getElementById('adminPanel');
+  styleVars(currentStyles).split(';').forEach(decl => {
+    const i = decl.indexOf(':');
+    panel.style.setProperty(decl.slice(0, i), decl.slice(i + 1));
+  });
+}
+
+function renderLivePreview() {
+  if (!document.getElementById('textStyleEditor').classList.contains('active')) return;
+  document.getElementById('livePreview').innerHTML = renderAdvertorial(collectContentFromEditor());
+}
+
+function resetTextStyles() {
+  currentStyles = JSON.parse(JSON.stringify(defaultTextStyles));
+  syncTextStyleControls();
+}
+
+// ---- Article body rich editor ----
+// The body is edited visually; it is stored as the same simple markup as before
+// (## headers, **bold**, *italic*, __underline__, ==highlight==).
+
+function selectionElement() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return null;
+  const node = sel.getRangeAt(0).commonAncestorContainer;
+  const el = node.nodeType === 1 ? node : node.parentElement;
+  return document.getElementById('bodyContentInput').contains(el) ? el : null;
+}
+
+function formatBody(cmd) {
+  const editor = document.getElementById('bodyContentInput');
+  if (!selectionElement()) editor.focus();
+
+  if (cmd === 'h2') {
+    const el = selectionElement();
+    const inHeader = el && el.closest('h2');
+    document.execCommand('formatBlock', false, inHeader ? 'p' : 'h2');
+  } else if (cmd === 'highlight') {
+    toggleHighlight();
+  } else {
+    document.execCommand(cmd);
+  }
+}
+
+function toggleHighlight() {
+  const sel = window.getSelection();
+  const el = selectionElement();
+  if (!el) return;
+
+  const existing = el.closest('mark');
+  if (existing) {
+    existing.replaceWith(...existing.childNodes);
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+  const mark = document.createElement('mark');
+  mark.appendChild(range.extractContents());
+  range.insertNode(mark);
+
+  const newRange = document.createRange();
+  newRange.selectNodeContents(mark);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Inline DOM -> markup
+function inlineToMarkup(node) {
+  let out = '';
+  node.childNodes.forEach(child => {
+    if (child.nodeType === 3) {
+      out += escapeHtml(child.nodeValue.replace(/ /g, ' '));
+      return;
+    }
+    if (child.nodeType !== 1) return;
+
+    const tag = child.tagName;
+    if (tag === 'BR') {
+      out += '\n';
+      return;
+    }
+
+    const inner = inlineToMarkup(child);
+    const marker = { B: '**', STRONG: '**', I: '*', EM: '*', U: '__', MARK: '==' }[tag];
+    if (!marker || !inner.trim()) {
+      out += inner;
+      return;
+    }
+    // Keep surrounding spaces outside the markers
+    const [, lead, core, trail] = inner.match(/^(\s*)([\s\S]*?)(\s*)$/);
+    out += lead + marker + core + marker + trail;
+  });
+  return out;
+}
+
+// Block DOM -> list of paragraphs / headers
+function collectBodyBlocks(root, blocks) {
+  let loose = document.createElement('div');
+
+  const flushLoose = () => {
+    if (loose.childNodes.length) pushBlock('P', loose);
+    loose = document.createElement('div');
+  };
+
+  const pushBlock = (tag, el) => {
+    const lines = inlineToMarkup(el).split('\n').map(l => l.trim()).filter(Boolean);
+    if (!lines.length) return;
+    if (/^H[1-6]$/.test(tag)) {
+      blocks.push('## ' + lines.join(' '));
+    } else {
+      lines.forEach(l => blocks.push(l));
+    }
+  };
+
+  Array.from(root.childNodes).forEach(child => {
+    const isBlock = child.nodeType === 1 && /^(P|DIV|H[1-6]|BLOCKQUOTE|UL|OL|LI|SECTION)$/.test(child.tagName);
+    if (!isBlock) {
+      loose.appendChild(child.cloneNode(true));
+      return;
+    }
+    flushLoose();
+    const hasBlockChildren = Array.from(child.children).some(c => /^(P|DIV|H[1-6]|BLOCKQUOTE|UL|OL|LI|SECTION)$/.test(c.tagName));
+    if (hasBlockChildren) {
+      collectBodyBlocks(child, blocks);
+    } else {
+      pushBlock(child.tagName, child);
+    }
+  });
+  flushLoose();
+}
+
+function getBodyMarkup() {
+  const blocks = [];
+  collectBodyBlocks(document.getElementById('bodyContentInput'), blocks);
+  return blocks.join('\n\n');
+}
+
+function setBodyMarkup(text) {
+  const editor = document.getElementById('bodyContentInput');
+  editor.innerHTML = parseBodyContent(text);
+}
+
+function setupRichEditor() {
+  document.execCommand('defaultParagraphSeparator', false, 'p');
+
+  const editor = document.getElementById('bodyContentInput');
+
+  // Paste as plain text so outside styles don't leak in
+  editor.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+
+  // Start with a paragraph so typing never creates loose text
+  editor.addEventListener('focus', () => {
+    if (!editor.innerHTML.trim()) {
+      editor.innerHTML = '<p><br></p>';
+      const range = document.createRange();
+      range.setStart(editor.firstChild, 0);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
+  editor.addEventListener('blur', () => {
+    if (!editor.textContent.trim()) editor.innerHTML = '';
+  });
+}
+
+function formatInline(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.+?)__/g, '<u>$1</u>')
+    .replace(/==(.+?)==/g, '<mark>$1</mark>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+}
+
+// ---- Multiple advertorials ----
+// Index: [{ id, name, createdAt, updatedAt }]; each advertorial's content lives under its own key.
+const INDEX_KEY = 'advertorial_index';
+const CONTENT_PREFIX = 'advertorial_content_';
+const STORAGE_LIMIT_CHARS = 5 * 1024 * 1024; // browsers allow roughly this much per site
+
+// The advertorial currently being edited / previewed
+let currentId = null;
+
+function newId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function getIndex() {
+  try {
+    return JSON.parse(localStorage.getItem(INDEX_KEY)) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveIndex(list) {
+  try {
+    localStorage.setItem(INDEX_KEY, JSON.stringify(list));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function getIndexEntry(id) {
+  return getIndex().find(a => a.id === id);
+}
+
+function updateIndexEntry(id, changes) {
+  const list = getIndex();
+  const entry = list.find(a => a.id === id);
+  if (!entry) return false;
+  Object.assign(entry, changes);
+  return saveIndex(list);
+}
+
+// Move the single advertorial from before this update into the list
+function migrateLegacyContent() {
+  try {
+    if (localStorage.getItem(INDEX_KEY)) return;
+    const list = [];
+    const legacy = localStorage.getItem(STORAGE_KEY);
+    if (legacy) {
+      const id = newId();
+      const now = Date.now();
+      localStorage.setItem(CONTENT_PREFIX + id, legacy);
+      list.push({ id, name: 'My first advertorial', createdAt: now, updatedAt: now });
+    }
+    if (saveIndex(list) && legacy) localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    console.error('Migration failed:', e);
+  }
+}
+
+function readContent(id) {
+  try {
+    const stored = localStorage.getItem(CONTENT_PREFIX + id);
+    return stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(defaultContent));
+  } catch (e) {
+    return JSON.parse(JSON.stringify(defaultContent));
+  }
+}
+
+function writeContent(id, content) {
+  try {
+    localStorage.setItem(CONTENT_PREFIX + id, JSON.stringify(content));
+    updateIndexEntry(id, { updatedAt: Date.now() });
+    return true;
+  } catch (e) {
+    console.error('Failed to save content:', e);
+    return false;
+  }
+}
+
+// Get stored content of the current advertorial (or the default)
+function getContent() {
+  return readContent(currentId);
+}
+
+// Save content of the current advertorial
+function saveContent(content) {
+  return writeContent(currentId, content);
+}
+
+function storageUsedChars() {
+  let total = 0;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      total += key.length + (localStorage.getItem(key) || '').length;
+    }
+  } catch (e) {}
+  return total;
+}
+
+// Get password
+function getPassword() {
+  try {
+    return localStorage.getItem(PASSWORD_KEY) || DEFAULT_PASSWORD;
+  } catch (e) {
+    return DEFAULT_PASSWORD;
+  }
+}
+
+// Set password
+function setPassword(password) {
+  try {
+    localStorage.setItem(PASSWORD_KEY, password);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Check if authenticated
+function isAuthenticated() {
+  try {
+    return localStorage.getItem(AUTH_KEY) === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+// Set authentication state
+function setAuth(authenticated) {
+  try {
+    if (authenticated) {
+      localStorage.setItem(AUTH_KEY, 'true');
+    } else {
+      localStorage.removeItem(AUTH_KEY);
+    }
+  } catch (e) {
+    console.error('Failed to set auth state:', e);
+  }
+}
+
+// Handle login
+function handleLogin() {
+  const passwordInput = document.getElementById('passwordInput');
+  const errorDiv = document.getElementById('loginError');
+
+  if (passwordInput.value === getPassword()) {
+    setAuth(true);
+    showDashboard();
+    passwordInput.value = '';
+    errorDiv.style.display = 'none';
+  } else {
+    errorDiv.style.display = 'block';
+    passwordInput.value = '';
+    passwordInput.focus();
+  }
+}
+
+// Handle logout
+function handleLogout() {
+  setAuth(false);
+  if (layoutEditing) toggleLayoutEditing();
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('previewPanel').style.display = 'none';
+}
+
+// Only one screen is visible at a time
+function showScreen(name) {
+  document.getElementById('loginScreen').style.display = name === 'login' ? 'flex' : 'none';
+  document.getElementById('dashboard').style.display = name === 'dashboard' ? 'block' : 'none';
+  document.getElementById('adminPanel').style.display = name === 'editor' ? 'block' : 'none';
+  document.getElementById('previewPanel').style.display = name === 'preview' ? 'block' : 'none';
+  window.scrollTo(0, 0);
+}
+
+// Show admin panel for one advertorial
+function showAdminPanel(id) {
+  currentId = id;
+  showScreen('editor');
+  document.getElementById('advertorialNameInput').value = (getIndexEntry(id) || {}).name || '';
+  loadContentIntoEditor();
+}
+
+// ---- Dashboard ----
+function formatDate(ts) {
+  return new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+function escapeAttr(text) {
+  return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function showDashboard() {
+  if (layoutEditing) toggleLayoutEditing();
+  currentId = null;
+  showScreen('dashboard');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  const list = getIndex().sort((a, b) => b.updatedAt - a.updatedAt);
+  const grid = document.getElementById('advertorialList');
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state">No advertorials yet. Type a name above and click <strong>Create</strong> to make your first one.</div>`;
+  } else {
+    grid.innerHTML = list.map(entry => {
+      const content = readContent(entry.id);
+      const images = (content.contentImages || []).length;
+      const thumbStyle = content.heroImage ? `background-image:url('${content.heroImage}')` : '';
+      return `
+        <div class="adv-card" data-id="${entry.id}">
+          <button type="button" class="adv-thumb" style="${thumbStyle}" onclick="showAdminPanel('${entry.id}')" aria-label="Edit ${escapeAttr(entry.name)}">
+            <span class="adv-thumb-headline" dir="auto">${escapeAttr(content.headline || 'Untitled')}</span>
+          </button>
+          <div class="adv-card-body">
+            <input type="text" class="editor-input adv-name-input" dir="auto" value="${escapeAttr(entry.name)}" aria-label="Advertorial name" data-rename="${entry.id}">
+            <div class="adv-meta">Edited ${formatDate(entry.updatedAt)} · ${images} image${images === 1 ? '' : 's'}</div>
+            <div class="adv-actions">
+              <button type="button" class="btn btn-primary btn-small" onclick="showAdminPanel('${entry.id}')">Edit</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="previewAdvertorial('${entry.id}')">Preview</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="duplicateAdvertorial('${entry.id}')">Duplicate</button>
+              <button type="button" class="btn btn-danger btn-small" onclick="deleteAdvertorial('${entry.id}')">Delete</button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  const pct = Math.min(100, Math.round(storageUsedChars() / STORAGE_LIMIT_CHARS * 100));
+  document.getElementById('storageFill').style.width = pct + '%';
+  document.getElementById('storageFill').classList.toggle('storage-high', pct >= 80);
+  document.getElementById('storageText').textContent =
+    `${list.length} advertorial${list.length === 1 ? '' : 's'} · storage about ${pct}% full` +
+    (pct >= 80 ? ' — remove images or advertorials to free space' : '');
+}
+
+function createAdvertorial() {
+  const input = document.getElementById('newAdvertorialName');
+  const name = input.value.trim() || 'Untitled advertorial';
+  const id = newId();
+  const now = Date.now();
+  const list = getIndex();
+  list.push({ id, name, createdAt: now, updatedAt: now });
+
+  if (!saveIndex(list) || !writeContent(id, JSON.parse(JSON.stringify(defaultContent)))) {
+    alert('Could not create: browser storage is full. Delete an advertorial or some images first.');
+    return;
+  }
+  input.value = '';
+  showAdminPanel(id);
+}
+
+function renameAdvertorial(id, name) {
+  const clean = name.trim() || 'Untitled advertorial';
+  updateIndexEntry(id, { name: clean });
+  return clean;
+}
+
+function duplicateAdvertorial(id) {
+  const source = getIndexEntry(id);
+  if (!source) return;
+  const copyId = newId();
+  const now = Date.now();
+  const list = getIndex();
+  list.push({ id: copyId, name: `${source.name} (copy)`, createdAt: now, updatedAt: now });
+
+  if (!saveIndex(list) || !writeContent(copyId, readContent(id))) {
+    // Roll back the half-made copy
+    saveIndex(list.filter(a => a.id !== copyId));
+    try { localStorage.removeItem(CONTENT_PREFIX + copyId); } catch (e) {}
+    alert('Could not duplicate: browser storage is full. Delete an advertorial or some images first.');
+    return;
+  }
+  renderDashboard();
+}
+
+function deleteAdvertorial(id) {
+  const entry = getIndexEntry(id);
+  if (!entry) return;
+  if (!confirm(`Delete "${entry.name}"? This cannot be undone.`)) return;
+  saveIndex(getIndex().filter(a => a.id !== id));
+  try { localStorage.removeItem(CONTENT_PREFIX + id); } catch (e) {}
+  renderDashboard();
+}
+
+// Preview straight from the dashboard (no editor fields involved)
+function previewAdvertorial(id) {
+  currentId = id;
+  previewReturnTo = 'dashboard';
+  renderPreviewScreen();
+}
+
+function backToDashboard() {
+  saveAllContent();
+  showDashboard();
+}
+
+function setupDashboard() {
+  document.getElementById('newAdvertorialName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') createAdvertorial();
+  });
+
+  // Rename on the dashboard cards
+  document.getElementById('advertorialList').addEventListener('change', e => {
+    const id = e.target.dataset.rename;
+    if (id) e.target.value = renameAdvertorial(id, e.target.value);
+  });
+
+  // Rename from inside the editor
+  const nameInput = document.getElementById('advertorialNameInput');
+  nameInput.addEventListener('change', () => {
+    if (currentId) nameInput.value = renameAdvertorial(currentId, nameInput.value);
+  });
+}
+
+// Load content into editor fields
+function loadContentIntoEditor() {
+  const content = getContent();
+
+  document.getElementById('headlineInput').value = content.headline || '';
+  document.getElementById('subheadlineInput').value = content.subheadline || '';
+  setBodyMarkup(content.bodyContent || '');
+  document.getElementById('ctaHeadlineInput').value = content.ctaHeadline || '';
+  document.getElementById('ctaTextInput').value = content.ctaText || '';
+  document.getElementById('ctaButtonTextInput').value = content.ctaButtonText || '';
+  document.getElementById('ctaLinkInput').value = content.ctaLink || '';
+
+  // Show hero image preview if exists
+  if (content.heroImage) {
+    document.getElementById('heroImagePreviewImg').src = content.heroImage;
+    document.getElementById('heroImagePreview').style.display = 'block';
+  } else {
+    document.getElementById('heroImagePreviewImg').removeAttribute('src');
+    document.getElementById('heroImagePreview').style.display = 'none';
+  }
+
+  currentContentImages = normalizeContentImages(content.contentImages);
+  renderContentImagesPreview();
+
+  currentStyles = getTextStyles(content);
+  syncTextStyleControls();
+}
+
+// Switch between editor tabs
+function switchTab(tabName) {
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+
+  // Update editor sections
+  document.querySelectorAll('.editor-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  document.getElementById(tabName + 'Editor').classList.add('active');
+  renderLivePreview();
+}
+
+// Additional (content) images being edited: [{ src, x, y, w }]
+// x = left edge in px from the article's center line (negative = left side),
+// y = top in px from the top of the article area, w = width in px.
+let currentContentImages = [];
+
+// New images go to the side spaces, alternating right / left
+function defaultImagePlacement(index) {
+  const w = 260;
+  const onRight = index % 2 === 0;
+  return {
+    x: onRight ? 424 : -424 - w,
+    y: Math.floor(index / 2) * 340,
+    w
+  };
+}
+
+// Older saves stored plain image strings
+function normalizeContentImages(list) {
+  return (Array.isArray(list) ? list : []).map((item, i) =>
+    typeof item === 'string' ? { src: item, ...defaultImagePlacement(i) } : item
+  );
+}
+
+function floatImageStyle(item) {
+  return `left:calc(50% + ${item.x}px);top:${item.y}px;width:${item.w}px`;
+}
+
+// Shrink an image so it fits in browser storage (~5MB for everything)
+function resizeImage(file, maxSize = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Could not read image: ' + file.name));
+    };
+    img.src = url;
+  });
+}
+
+// Handle image upload
+async function handleImageUpload(imageKey, input) {
+  const files = Array.from(input.files);
+  input.value = '';
+  if (!files.length) return;
+
+  try {
+    if (imageKey === 'heroImage') {
+      const dataUrl = await resizeImage(files[0], 1920);
+      document.getElementById('heroImagePreviewImg').src = dataUrl;
+      document.getElementById('heroImagePreview').style.display = 'block';
+    } else if (imageKey === 'contentImages') {
+      for (const file of files) {
+        currentContentImages.push({
+          src: await resizeImage(file),
+          ...defaultImagePlacement(currentContentImages.length)
+        });
+      }
+      renderContentImagesPreview();
+    }
+    saveAllContent();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+// Remove image
+function removeImage(imageKey, index) {
+  if (imageKey === 'heroImage') {
+    document.getElementById('heroImagePreview').style.display = 'none';
+    document.getElementById('heroImagePreviewImg').src = '';
+  } else if (imageKey === 'contentImages') {
+    currentContentImages.splice(index, 1);
+    renderContentImagesPreview();
+  }
+  saveAllContent();
+}
+
+function moveContentImage(index, delta) {
+  const target = index + delta;
+  if (target < 0 || target >= currentContentImages.length) return;
+  const [img] = currentContentImages.splice(index, 1);
+  currentContentImages.splice(target, 0, img);
+  renderContentImagesPreview();
+  saveAllContent();
+}
+
+function renderContentImagesPreview() {
+  const container = document.getElementById('contentImagesPreview');
+  container.innerHTML = currentContentImages.length
+    ? `<div class="content-images-grid">` + currentContentImages.map((item, i) => `
+        <div class="content-image-item">
+          <img src="${item.src}" alt="Content image ${i + 1}">
+          <div class="content-image-actions">
+            <button type="button" onclick="moveContentImage(${i}, -1)" title="Move earlier" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button type="button" onclick="moveContentImage(${i}, 1)" title="Move later" ${i === currentContentImages.length - 1 ? 'disabled' : ''}>↓</button>
+            <button type="button" onclick="removeImage('contentImages', ${i})" title="Remove">Remove</button>
+          </div>
+        </div>`).join('') + `</div>`
+    : '';
+}
+
+// Read current (possibly unsaved) editor values
+function collectContentFromEditor() {
+  return {
+    heroImage: document.getElementById('heroImagePreview').style.display !== 'none'
+      ? document.getElementById('heroImagePreviewImg').src
+      : '',
+    headline: document.getElementById('headlineInput').value,
+    subheadline: document.getElementById('subheadlineInput').value,
+    bodyContent: getBodyMarkup(),
+    contentImages: currentContentImages.slice(),
+    ctaHeadline: document.getElementById('ctaHeadlineInput').value,
+    ctaText: document.getElementById('ctaTextInput').value,
+    ctaButtonText: document.getElementById('ctaButtonTextInput').value,
+    ctaLink: document.getElementById('ctaLinkInput').value,
+    textStyles: currentStyles
+  };
+}
+
+// Save all content
+function saveAllContent() {
+  if (!currentId) return;
+  const content = collectContentFromEditor();
+
+  // Check if password should be changed
+  const newPassword = document.getElementById('passwordChangeInput').value;
+  if (newPassword) {
+    setPassword(newPassword);
+    document.getElementById('passwordChangeInput').value = '';
+  }
+
+  if (saveContent(content)) {
+    showSavedIndicator();
+  } else {
+    alert('Could not save: browser storage is full. Remove an image (or use smaller images) and try again.');
+  }
+}
+
+// Show saved indicator
+function showSavedIndicator() {
+  const indicator = document.getElementById('savedIndicator');
+  indicator.classList.add('show');
+  setTimeout(() => {
+    indicator.classList.remove('show');
+  }, 3000);
+}
+
+// Parse body content (convert ## headers and paragraphs)
+function parseBodyContent(text) {
+  if (!text) return '';
+
+  const lines = text.split('\n');
+  let html = '';
+  let inParagraph = false;
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('## ')) {
+      if (inParagraph) {
+        html += '</p>';
+        inParagraph = false;
+      }
+      html += `<h2>${formatInline(trimmed.substring(3))}</h2>`;
+    } else if (trimmed === '') {
+      if (inParagraph) {
+        html += '</p>';
+        inParagraph = false;
+      }
+    } else {
+      if (!inParagraph) {
+        html += '<p>';
+        inParagraph = true;
+      }
+      html += formatInline(trimmed) + ' ';
+    }
+  });
+
+  if (inParagraph) {
+    html += '</p>';
+  }
+
+  return html;
+}
+
+// Build the advertorial markup
+function renderAdvertorial(content) {
+  const styles = getTextStyles(content);
+  const lang = styles.direction === 'rtl' ? 'ar' : 'en';
+
+  return `
+    <div class="advertorial" dir="${styles.direction}" lang="${lang}" style="${styleVars(styles)}">
+      <div class="advertorial-hero" style="background-image: url('${content.heroImage || ''}');">
+        <div class="advertorial-hero-overlay"></div>
+        <div class="advertorial-hero-content">
+          <h1 class="advertorial-headline">${content.headline || 'Your Headline Here'}</h1>
+          <p class="advertorial-subheadline">${content.subheadline || 'Your subheadline here'}</p>
+        </div>
+      </div>
+
+      <div class="advertorial-content">
+        <div class="advertorial-body">
+          ${parseBodyContent(content.bodyContent)}
+        </div>
+
+        ${normalizeContentImages(content.contentImages).map((item, i) => `
+        <figure class="float-img" data-index="${i}" style="${floatImageStyle(item)}">
+          <img src="${item.src}" alt="" draggable="false">
+          <span class="float-handle nw" data-corner="nw"></span>
+          <span class="float-handle ne" data-corner="ne"></span>
+          <span class="float-handle sw" data-corner="sw"></span>
+          <span class="float-handle se" data-corner="se"></span>
+        </figure>`).join('')}
+
+        <div class="advertorial-cta">
+          <h3 class="cta-headline">${content.ctaHeadline || 'Ready to Take Action?'}</h3>
+          <p class="cta-text">${content.ctaText || 'Click below to get started'}</p>
+          <div class="cta-button-wrap">
+            <a href="${content.ctaLink || '#'}" class="cta-button" target="_blank">
+              ${content.ctaButtonText || 'Learn More'}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Where "Back" in the preview goes: 'editor' or 'dashboard'
+let previewReturnTo = 'editor';
+
+// Show preview (from the editor)
+function showPreview() {
+  // Save current content first
+  saveAllContent();
+  previewReturnTo = 'editor';
+  renderPreviewScreen();
+}
+
+function renderPreviewScreen() {
+  const frame = document.getElementById('previewFrame');
+  frame.innerHTML = renderAdvertorial(getContent());
+
+  const entry = getIndexEntry(currentId);
+  document.getElementById('previewTitle').textContent = entry ? `Preview: ${entry.name}` : 'Preview';
+  document.getElementById('previewBackBtn').textContent =
+    previewReturnTo === 'dashboard' ? 'Back to All Advertorials' : 'Back to Editor';
+
+  showScreen('preview');
+
+  frame.querySelectorAll('.float-img img').forEach(img => {
+    if (!img.complete) img.addEventListener('load', fitFloatImages);
+  });
+  fitFloatImages();
+  updateLayoutNotice();
+}
+
+// Hide preview
+function hidePreview() {
+  if (layoutEditing) toggleLayoutEditing();
+  if (previewReturnTo === 'dashboard') {
+    showDashboard();
+  } else {
+    showScreen('editor');
+  }
+}
+
+// ---- Free image layout (drag + corner resize) ----
+let layoutEditing = false;
+
+function isFreeLayout(fig) {
+  return getComputedStyle(fig).position === 'absolute';
+}
+
+// Grow the article so images placed below the text are not cut off
+function fitFloatImages() {
+  document.querySelectorAll('.advertorial-content').forEach(content => {
+    let bottom = 0;
+    content.querySelectorAll('.float-img').forEach(fig => {
+      if (isFreeLayout(fig)) bottom = Math.max(bottom, fig.offsetTop + fig.offsetHeight);
+    });
+    content.style.setProperty('--float-min-h', bottom ? `${bottom + 48}px` : '0px');
+  });
+}
+
+function toggleLayoutEditing() {
+  layoutEditing = !layoutEditing;
+  const frame = document.getElementById('previewFrame');
+  frame.classList.toggle('layout-editing', layoutEditing);
+  frame.querySelectorAll('.float-img.selected').forEach(f => f.classList.remove('selected'));
+  document.getElementById('layoutToggleBtn').textContent = layoutEditing ? 'Done Arranging' : 'Arrange Images';
+  document.getElementById('layoutToggleBtn').classList.toggle('btn-active', layoutEditing);
+  updateLayoutNotice();
+}
+
+function updateLayoutNotice() {
+  const notice = document.getElementById('layoutNotice');
+  const figs = document.querySelectorAll('#previewFrame .float-img');
+  if (!layoutEditing) {
+    notice.style.display = 'none';
+    return;
+  }
+  if (!figs.length) {
+    notice.textContent = 'No images yet. Upload them under Content → Additional Images.';
+  } else if (!isFreeLayout(figs[0])) {
+    notice.textContent = 'The window is too narrow to place images beside the article. Make it wider (at least 1100px) to arrange them. On narrow screens and phones, images appear below the article text.';
+  } else {
+    notice.textContent = 'Drag an image to move it. Drag a corner handle to make it bigger or smaller. Changes save automatically.';
+  }
+  notice.style.display = 'block';
+}
+
+function setupLayoutEditor() {
+  const frame = document.getElementById('previewFrame');
+
+  frame.addEventListener('pointerdown', e => {
+    if (!layoutEditing) return;
+    const fig = e.target.closest('.float-img');
+    frame.querySelectorAll('.float-img.selected').forEach(f => f.classList.remove('selected'));
+    if (!fig || !isFreeLayout(fig)) return;
+
+    e.preventDefault();
+    fig.classList.add('selected');
+
+    const content = getContent();
+    content.contentImages = normalizeContentImages(content.contentImages);
+    const item = content.contentImages[Number(fig.dataset.index)];
+    const handle = e.target.closest('.float-handle');
+    const start = {
+      px: e.clientX, py: e.clientY,
+      x: item.x, y: item.y,
+      w: fig.offsetWidth, h: fig.offsetHeight
+    };
+
+    fig.setPointerCapture(e.pointerId);
+
+    const onMove = ev => {
+      const dx = ev.clientX - start.px;
+      const dy = ev.clientY - start.py;
+
+      if (handle) {
+        // Resize from a corner, keeping the aspect ratio; the opposite corner stays put
+        const corner = handle.dataset.corner;
+        const w = Math.max(60, Math.min(1400, start.w + (corner.includes('e') ? dx : -dx)));
+        const h = w * (start.h / start.w);
+        item.w = w;
+        item.x = corner.includes('w') ? start.x + (start.w - w) : start.x;
+        item.y = corner.includes('n') ? start.y + (start.h - h) : start.y;
+      } else {
+        item.x = start.x + dx;
+        item.y = start.y + dy;
+      }
+      fig.setAttribute('style', floatImageStyle(item));
+      fitFloatImages();
+    };
+
+    const onUp = () => {
+      fig.removeEventListener('pointermove', onMove);
+      fig.removeEventListener('pointerup', onUp);
+      fig.removeEventListener('pointercancel', onUp);
+      item.x = Math.round(item.x);
+      item.y = Math.round(item.y);
+      item.w = Math.round(item.w);
+      if (saveContent(content)) {
+        currentContentImages = content.contentImages.slice();
+      } else {
+        alert('Could not save: browser storage is full.');
+      }
+    };
+
+    fig.addEventListener('pointermove', onMove);
+    fig.addEventListener('pointerup', onUp);
+    fig.addEventListener('pointercancel', onUp);
+  });
+
+  window.addEventListener('resize', () => {
+    fitFloatImages();
+    updateLayoutNotice();
+  });
+}
+
+// Handle enter key on password field
+document.addEventListener('DOMContentLoaded', function() {
+  migrateLegacyContent();
+  buildTextStyleControls();
+  setupRichEditor();
+  setupLayoutEditor();
+  setupDashboard();
+
+  document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  });
+
+  // Check if already authenticated
+  if (isAuthenticated()) {
+    showDashboard();
+  }
+});
+</script>
