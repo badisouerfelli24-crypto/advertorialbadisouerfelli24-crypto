@@ -713,6 +713,85 @@ body {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
 }
 
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .login-box {
+    padding: 32px 24px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .admin-title {
+    font-size: 24px;
+  }
+
+  .editor-section {
+    padding: 20px;
+  }
+
+  .editor-title-row {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .name-input {
+    font-size: 22px;
+  }
+
+  .style-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Saved Indicator */
+.saved-indicator {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #059669;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.saved-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+
+<style id="advertorial-css">
 /* Advertorial Content */
 .advertorial {
   padding: 0;
@@ -1027,40 +1106,8 @@ body {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Mobile Responsive */
+/* Advertorial on phones */
 @media (max-width: 640px) {
-  .login-box {
-    padding: 32px 24px;
-  }
-
-  .admin-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .admin-title {
-    font-size: 24px;
-  }
-
-  .editor-section {
-    padding: 20px;
-  }
-
-  .editor-title-row {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .name-input {
-    font-size: 22px;
-  }
-
-  .style-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 6px;
-  }
-
   .advertorial-headline {
     font-size: calc(var(--headline-size, 42px) * 0.78);
   }
@@ -1084,48 +1131,6 @@ body {
   .cta-headline {
     font-size: calc(var(--ctaHeadline-size, 28px) * 0.85);
   }
-}
-
-/* Loading State */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Saved Indicator */
-.saved-indicator {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: #059669;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s, transform 0.3s;
-}
-
-.saved-indicator.show {
-  opacity: 1;
-  transform: translateY(0);
 }
 </style>
 
@@ -1179,9 +1184,12 @@ body {
       <button class="btn btn-secondary" onclick="backToDashboard()">← All Advertorials</button>
       <input type="text" id="advertorialNameInput" class="name-input" dir="auto" aria-label="Advertorial name" title="Click to rename">
     </div>
-    <div style="display: flex; gap: 12px;">
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
       <button class="btn btn-secondary" onclick="showPreview()">
         Preview Page
+      </button>
+      <button class="btn btn-secondary" onclick="downloadAdvertorialPage(currentId)" title="Saves, then downloads a standalone page you can share as a link">
+        Download Page
       </button>
       <button class="btn btn-secondary" onclick="handleLogout()">
         Logout
@@ -2022,6 +2030,7 @@ function renderDashboard() {
             <div class="adv-actions">
               <button type="button" class="btn btn-primary btn-small" onclick="showAdminPanel('${entry.id}')">Edit</button>
               <button type="button" class="btn btn-secondary btn-small" onclick="previewAdvertorial('${entry.id}')">Preview</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="downloadAdvertorialPage('${entry.id}')" title="Download the last saved version as a standalone page to share">Download Page</button>
               <button type="button" class="btn btn-secondary btn-small" onclick="duplicateAdvertorial('${entry.id}')">Duplicate</button>
               <button type="button" class="btn btn-danger btn-small" onclick="deleteAdvertorial('${entry.id}')">Delete</button>
             </div>
@@ -2092,6 +2101,100 @@ function previewAdvertorial(id) {
   currentId = id;
   previewReturnTo = 'dashboard';
   renderPreviewScreen();
+}
+
+// ---- Standalone page export (for sharing a link) ----
+const FONT_QUERIES = {
+  'Inter': 'Inter:wght@400;500;700;900',
+  'Playfair Display': 'Playfair+Display:wght@400;700;900',
+  'Cairo': 'Cairo:wght@400;500;700;900',
+  'Tajawal': 'Tajawal:wght@400;500;700;900',
+  'Almarai': 'Almarai:wght@400;700;800',
+  'Noto Kufi Arabic': 'Noto+Kufi+Arabic:wght@400;500;700;900',
+  'Noto Naskh Arabic': 'Noto+Naskh+Arabic:wght@400;500;700',
+  'Amiri': 'Amiri:wght@400;700'
+};
+
+// Only load the fonts this advertorial actually uses
+function usedFontsLink(styles) {
+  const names = new Set([styles.bodyFont, styles.headingFont]);
+  Object.values(styles.elements).forEach(el => {
+    if (FONTS[el.font]) names.add(el.font);
+  });
+  const families = [...names].filter(n => FONT_QUERIES[n]).map(n => `family=${FONT_QUERIES[n]}`).join('&');
+  return families ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?${families}&display=swap">` : '';
+}
+
+function slugify(name, fallback) {
+  const slug = String(name).toLowerCase().normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+  return slug || fallback;
+}
+
+function buildStandalonePage(content) {
+  const styles = getTextStyles(content);
+  const lang = styles.direction === 'rtl' ? 'ar' : 'en';
+  const title = escapeAttr(content.headline || 'Advertorial');
+  const description = escapeAttr(content.subheadline || '');
+  const css = document.getElementById('advertorial-css').textContent;
+
+  return `<!DOCTYPE html>
+<html lang="${lang}" dir="${styles.direction}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title}</title>
+<meta name="description" content="${description}">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:type" content="article">
+${usedFontsLink(styles)}
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #ffffff; color: #1a1a2e; line-height: 1.6; }
+${css}
+</style>
+</head>
+<body>
+${renderAdvertorial(content, { editable: false })}
+<script>
+// Keep images placed below the text inside the page
+function fitFloatImages() {
+  document.querySelectorAll('.advertorial-content').forEach(function (content) {
+    var bottom = 0;
+    content.querySelectorAll('.float-img').forEach(function (fig) {
+      if (getComputedStyle(fig).position === 'absolute') bottom = Math.max(bottom, fig.offsetTop + fig.offsetHeight);
+    });
+    content.style.setProperty('--float-min-h', bottom ? (bottom + 48) + 'px' : '0px');
+  });
+}
+window.addEventListener('load', fitFloatImages);
+window.addEventListener('resize', fitFloatImages);
+<\/script>
+</body>
+</html>
+`;
+}
+
+// Download the last saved version of an advertorial as one HTML file
+function downloadAdvertorialPage(id) {
+  if (id === currentId && document.getElementById('adminPanel').style.display === 'block') {
+    saveAllContent();
+  }
+  const entry = getIndexEntry(id);
+  const html = buildStandalonePage(readContent(id));
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${slugify(entry ? entry.name : '', 'advertorial-' + id)}.html`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function backToDashboard() {
@@ -2359,8 +2462,8 @@ function parseBodyContent(text) {
   return html;
 }
 
-// Build the advertorial markup
-function renderAdvertorial(content) {
+// Build the advertorial markup (handles are only needed inside the editor)
+function renderAdvertorial(content, { editable = true } = {}) {
   const styles = getTextStyles(content);
   const lang = styles.direction === 'rtl' ? 'ar' : 'en';
 
@@ -2381,11 +2484,11 @@ function renderAdvertorial(content) {
 
         ${normalizeContentImages(content.contentImages).map((item, i) => `
         <figure class="float-img" data-index="${i}" style="${floatImageStyle(item)}">
-          <img src="${item.src}" alt="" draggable="false">
+          <img src="${item.src}" alt="" draggable="false">${editable ? `
           <span class="float-handle nw" data-corner="nw"></span>
           <span class="float-handle ne" data-corner="ne"></span>
           <span class="float-handle sw" data-corner="sw"></span>
-          <span class="float-handle se" data-corner="se"></span>
+          <span class="float-handle se" data-corner="se"></span>` : ''}
         </figure>`).join('')}
 
         <div class="advertorial-cta">
