@@ -25,5 +25,5 @@ Then visit http://localhost:8000.
 
 - **Storage is per browser.** Content is saved in the browser's `localStorage`. It is not in this repo and does not sync between browsers or devices. Clearing site data deletes it.
 - **Not a secure admin.** The login is a client-side convenience only. The default password (`admin123`) is visible in the source. Change it in Settings, and do not host this editor publicly as a protected admin area.
-- **Not a public landing page yet.** Visitors to a hosted copy see the login screen, not an advertorial. Publishing requires exporting a standalone page (planned).
+- **Publishing.** GitHub Pages serves only the `docs/` folder, never the editor. To publish, open the editor locally, click **Save** then **Download Page**, and put the file in `docs/` (`docs/index.html` is the home page; others go in `docs/<name>.html`).
 - **No secrets.** This project uses no API keys. Never commit `.env` files. They are ignored by `.gitignore`.
